@@ -1,8 +1,9 @@
 # CoronaCurve
 
 Generelle Idee:
-- 
-Spiel, in dem man dank einer Simulation erlebt, was die <- AN JEMANDEN FÄHIGEREN: BITTE WEITERFORMULIEREN! MERCI BEAUCOUP
+- Spieler ist infiziert
+- so viele andere wie möglich infizieren (Highscore)
+- am Ende werden Statistiken angezeigt, die darstellen welche Auswirkungen die Upgrades auf Infektionskurve haben
 
 Ideen für Upgrades:
 - Man wird Arzt oder Verkäufer oder so
