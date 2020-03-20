@@ -3,7 +3,9 @@
 Ideen für dieses Projekt:
 
 Generelle Idee:
-- 
+- Spieler ist infiziert
+- so viele andere wie möglich infizieren (Highscore)
+- am Ende werden Statistiken angezeigt, die darstellen welche Auswirkungen die Upgrades auf Infektionskurve haben
 
 Ideen für Upgrades:
 - Man wird Arzt oder Verkäufer oder so
