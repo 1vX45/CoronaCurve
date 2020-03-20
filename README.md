@@ -1,9 +1,8 @@
 # CoronaCurve
 
-Ideen für dieses Projekt:
-
 Generelle Idee:
 - 
+Spiel, in dem man dank einer Simulation erlebt, was die <- AN JEMANDEN FÄHIGEREN: BITTE WEITERFORMULIEREN! MERCI BEAUCOUP
 
 Ideen für Upgrades:
 - Man wird Arzt oder Verkäufer oder so
