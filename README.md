@@ -1,7 +1,5 @@
 # CoronaCurve
 
-Ideen für dieses Projekt:
-
 Generelle Idee:
 - Spieler ist infiziert
 - so viele andere wie möglich infizieren (Highscore)
