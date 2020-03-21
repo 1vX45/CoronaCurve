@@ -23,10 +23,18 @@ public class NPC {
 		return status;
 	}
 	
+	public int getX(){
+		return posX;
+	}
+	
+	public int getY(){
+		return posY;
+	}
+	
 	/*
 	 *  0: no collision
 	 *  1: collision left or right
-	 *  2: collision up or down
+	 *  2: collision above or below
 	 */
 	public int isBorder(int sizeX, int sizeY){
 		if(posX < 0 || posX > sizeX - size)
@@ -35,7 +43,6 @@ public class NPC {
 			return 2;
 		else return 0;
 	}
-	
 	
 	public void move(){
 		int x = CoronaCurve.appletSize_x;
@@ -52,6 +59,25 @@ public class NPC {
 			posX += speedX;
 			posY += speedY;
 		}
+	}
+	
+	public void infect(){
+		status = CoronaCurve.INFECTED;
+		color = CoronaCurve.CLR_INFECTED;
+	}
+	
+	public void heal(){
+		status = CoronaCurve.IMMUNE;
+		color = CoronaCurve.CLR_IMMUNE;
+	}
+	
+	public boolean collidesWith(NPC other){
+		int diff_x = Math.abs(posX - other.getX());
+		int diff_y = Math.abs(posY - other.getY());
+		double dist = Math.sqrt(diff_x*diff_x + diff_y*diff_y);
+		if(dist < size) 
+			return true;
+		else return false;
 	}
 	
 	public void paint(Graphics g){

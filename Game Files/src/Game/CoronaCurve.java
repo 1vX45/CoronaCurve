@@ -22,7 +22,7 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	public static int appletSize_y = 600;							//Höhe des Applet-Fensters
 	
 	private Color mainColor = Color.yellow;							//Schriftfarbe
-	private Color backgroundColor = Color.black;					//Hintergrundfarbe
+	private Color backgroundColor = Color.white;					//Hintergrundfarbe
 	
 	private Font mainFont = new Font("Impact", Font.PLAIN, 20);		//Schriftart	
 	private Font titleFont = new Font("Impact", Font.PLAIN, 50);	//Schriftart für Titel
@@ -39,9 +39,9 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	public static final int INFECTED = 1;
 	public static final int IMMUNE = 2;
 	
-	private static final Color CLR_HEALTHY = Color.GREEN;
-	private static final Color CLR_INFECTED = Color.ORANGE;
-	private static final Color CLR_IMMUNE = new Color(186, 85, 211);
+	public static final Color CLR_HEALTHY = new Color(82, 189, 81);
+	public static final Color CLR_INFECTED = new Color(189, 55, 55);
+	public static final Color CLR_IMMUNE = new Color(166, 166, 166);
 	
 	private static final int ENTITY_SIZE = 15;
 	private static final int PLAYER_STARTX = appletSize_x / 2;
@@ -96,6 +96,20 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 		}
 	}
 	
+	private void checkCollisions(){
+		int j = 1, jr = 1;
+		for(int i = 0; i < npcs.length; i++){
+			j = jr;
+			while(j<npcs.length){
+				if(npcs[i].collidesWith(npcs[j])){
+					npcs[i].infect();
+					npcs[j].infect();
+				}
+				j++;
+			}
+			jr++;
+		}
+	}
 	
 	public void start(){
 		th = new Thread(this);
@@ -150,6 +164,8 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 			for(int i = 0; i < npcs.length; i++){
 				npcs[i].move();
 			}
+			
+			checkCollisions();
 			
 			try {
 				Thread.sleep(10);
