@@ -26,7 +26,7 @@ public class NPC {
 	/*
 	 *  0: no collision
 	 *  1: collision left or right
-	 *  2: collision up or down
+	 *  2: collision above or below
 	 */
 	public int isBorder(int sizeX, int sizeY){
 		if(posX < 0 || posX > sizeX - size)

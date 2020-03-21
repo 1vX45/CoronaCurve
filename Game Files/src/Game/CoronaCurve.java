@@ -22,7 +22,7 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	public static int appletSize_y = 600;							//Höhe des Applet-Fensters
 	
 	private Color mainColor = Color.yellow;							//Schriftfarbe
-	private Color backgroundColor = Color.black;					//Hintergrundfarbe
+	private Color backgroundColor = Color.white;					//Hintergrundfarbe
 	
 	private Font mainFont = new Font("Impact", Font.PLAIN, 20);		//Schriftart	
 	private Font titleFont = new Font("Impact", Font.PLAIN, 50);	//Schriftart für Titel
@@ -39,9 +39,9 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	public static final int INFECTED = 1;
 	public static final int IMMUNE = 2;
 	
-	private static final Color CLR_HEALTHY = Color.GREEN;
-	private static final Color CLR_INFECTED = Color.ORANGE;
-	private static final Color CLR_IMMUNE = new Color(186, 85, 211);
+	private static final Color CLR_HEALTHY = new Color(82, 189, 81);
+	private static final Color CLR_INFECTED = new Color(189, 55, 55);
+	private static final Color CLR_IMMUNE = new Color(166, 166, 166);
 	
 	private static final int ENTITY_SIZE = 15;
 	private static final int PLAYER_STARTX = appletSize_x / 2;
@@ -91,7 +91,7 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 		for(int i = 0; i < n; i++){
 			x = Math.abs(rand.nextInt() % appletSize_x);
 			y = Math.abs(rand.nextInt() % appletSize_y);
-			npcs[i] = new NPC(x, y, ENTITY_SIZE, ENTITY_SPEED, ENTITY_SPEED, CLR_HEALTHY);
+			npcs[i] = new NPC(x, y, ENTITY_SIZE, rand.nextInt() % 2 +1, rand.nextInt() % 2 +1, CLR_HEALTHY);
 		}
 	}
 	
@@ -150,7 +150,7 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 			}
 			
 			try {
-				Thread.sleep(10);
+				Thread.sleep(30);
 			} catch (InterruptedException e) {
 				System.out.println(e);
 			} 
