@@ -5,11 +5,12 @@ import java.awt.Graphics;
 
 public class NPC {
 	private int status;
-	private int posX, posY, size;
-	private int speedX, speedY;
+	private double posX, posY;
+	private int size;
+	private double speedX, speedY;
 	private Color color;
 	
-	public NPC (int startX, int startY, int size, int initSpeedX, int initSpeedY, Color initColor){
+	public NPC (int startX, int startY, int size, double initSpeedX, double initSpeedY, Color initColor){
 		status = CoronaCurve.HEALTHY;
 		posX = startX;
 		posY = startY;
@@ -23,11 +24,11 @@ public class NPC {
 		return status;
 	}
 	
-	public int getX(){
+	public double getX(){
 		return posX;
 	}
 	
-	public int getY(){
+	public double getY(){
 		return posY;
 	}
 	
@@ -61,6 +62,18 @@ public class NPC {
 		}
 	}
 	
+	public void doSth(int r){
+			switch (r) {
+			case 0:
+				move();
+				break;
+			case 1:
+				break;
+			default:
+				break;
+			}
+	}
+	
 	public void infect(){
 		status = CoronaCurve.INFECTED;
 		color = CoronaCurve.CLR_INFECTED;
@@ -72,8 +85,8 @@ public class NPC {
 	}
 	
 	public boolean collidesWith(NPC other){
-		int diff_x = Math.abs(posX - other.getX());
-		int diff_y = Math.abs(posY - other.getY());
+		double diff_x = Math.abs(posX - other.getX());
+		double diff_y = Math.abs(posY - other.getY());
 		double dist = Math.sqrt(diff_x*diff_x + diff_y*diff_y);
 		if(dist < size) 
 			return true;
@@ -82,7 +95,7 @@ public class NPC {
 	
 	public void paint(Graphics g){
 		g.setColor(color);
-		g.fillOval(posX, posY, size, size);
+		g.fillOval((int)posX, (int)posY, size, size);
 	}
 }
 

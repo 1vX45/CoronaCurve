@@ -33,6 +33,15 @@ public class Player {
 		posY += speed;
 	}
 	
+	public boolean collidesWith(NPC other){
+		int diff_x = Math.abs(posX - (int)other.getX());
+		int diff_y = Math.abs(posY - (int)other.getY());
+		double dist = Math.sqrt(diff_x*diff_x + diff_y*diff_y);
+		if(dist < size) 
+			return true;
+		else return false;
+	}
+	
 	public void paint(Graphics g){
 		g.setColor(color);
 		g.fillOval(posX, posY, size, size);

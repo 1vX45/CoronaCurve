@@ -9,9 +9,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+
+import com.sun.xml.internal.ws.api.Component;
 
 public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyListener {
 		
@@ -26,6 +31,8 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	
 	private Font mainFont = new Font("Impact", Font.PLAIN, 20);		//Schriftart	
 	private Font titleFont = new Font("Impact", Font.PLAIN, 50);	//Schriftart für Titel
+	
+	private Image startImage;
 	
 	// Variablen für die Doppelpufferung
 	private Image dbImage;
@@ -48,12 +55,17 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	private static final int PLAYER_STARTY = appletSize_y - 50;
 	private static final int ENTITY_SPEED = 1;
 
+	private int propability = 50;
 	
 	private NPC[] npcs;
+	private int[] npcActions;
+	private int actionCounter = 0;
 	private Player player;
 	
 	private boolean leftPressed, rightPressed, upPressed, downPressed;
 	
+	private boolean menuStart = true;
+	private boolean game = false;
 	
 	
 	public static void main(String[] args){
@@ -70,7 +82,7 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	}
 	
 	public void init(){
-		this.setSize(400, 400);
+		this.setSize(600, 600);
 		
 		setBackground(backgroundColor);
 		setSize(appletSize_x, appletSize_y);		
@@ -78,7 +90,15 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 		addKeyListener(this);
 		addMouseListener(this);
 		
+		try {
+			startImage = (Image) ImageIO.read(new File("bin/Startbild.png")).getScaledInstance(650, 650, Image.SCALE_DEFAULT);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		npcs = new NPC[20];
+		npcActions = new int[20];
+		actionSet();
 		createNPCs(npcs, 20);
 		
 	
@@ -87,11 +107,18 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	
 	private void createNPCs(NPC[] npcs, int n){
 		int x, y;
-		
+		double d;
 		for(int i = 0; i < n; i++){
 			x = Math.abs(rand.nextInt() % appletSize_x);
 			y = Math.abs(rand.nextInt() % appletSize_y);
-			npcs[i] = new NPC(x, y, ENTITY_SIZE, rand.nextInt() % 2 +1, rand.nextInt() % 2 +1, CLR_HEALTHY);
+//			npcs[i] = new NPC(x, y, ENTITY_SIZE, rand.nextInt() % 2 +1, rand.nextInt() % 2 +1, CLR_HEALTHY);
+			npcs[i] = new NPC(x, y, ENTITY_SIZE, (double)(rand.nextInt() % 20) / 10, (double)(rand.nextInt() % 20) / 10, CLR_HEALTHY);
+		}
+	}
+	
+	private void actionSet(){
+		for(int i = 0; i < npcs.length; i++){
+			npcActions[i] = rand.nextInt()%2;
 		}
 	}
 	
@@ -100,13 +127,22 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 		for(int i = 0; i < npcs.length; i++){
 			j = jr;
 			while(j<npcs.length){
-				if(npcs[i].collidesWith(npcs[j])){
-					npcs[i].infect();
-					npcs[j].infect();
+				if(npcs[i].collidesWith(npcs[j])){		
+					if (Math.abs((int)rand.nextInt()  % 100 + 1) < propability) {
+						System.out.println("INFECT");
+						if(npcs[j].getStatus() == INFECTED) 
+							npcs[i].infect();
+						if(npcs[i].getStatus() == INFECTED)
+							npcs[j].infect();
+					}
 				}
 				j++;
 			}
 			jr++;
+			
+			if(player.collidesWith(npcs[i])){
+				npcs[i].infect();
+			}
 		}
 	}
 	
@@ -120,9 +156,17 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+	public void mouseClicked(MouseEvent e) {
+		int x = e.getX();
+		int y = e.getY();
 		
+		if (menuStart) {
+			if (x >= 200 && x <= 450 && y >= 380 && y <= 480) {
+				menuStart = false;
+				game = true;
+				repaint();
+			} 
+		}
 	}
 
 	@Override
@@ -152,33 +196,48 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	@Override
 	public void run() {
 		while (true) {
-			
-			repaint();
-			
-			if(leftPressed) player.moveLeft();
-			if(rightPressed) player.moveRight();
-			if(upPressed) player.moveUp();
-			if(downPressed) player.moveDown();
-			
-			for(int i = 0; i < npcs.length; i++){
-				npcs[i].move();
+			if (game) {
+				repaint();
+				if (leftPressed)
+					player.moveLeft();
+				if (rightPressed)
+					player.moveRight();
+				if (upPressed)
+					player.moveUp();
+				if (downPressed)
+					player.moveDown();
+				for (int i = 0; i < npcs.length; i++) {
+					npcs[i].doSth(npcActions[i]);
+				}
+				checkCollisions();
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					System.out.println(e);
+				}
+				if (actionCounter == 0) {
+					actionSet();
+					actionCounter++;
+				} else if (actionCounter < 50) {
+					actionCounter++;
+				} else
+					actionCounter = 0;
 			}
 			
-			checkCollisions();
-			
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				System.out.println(e);
-			} 
+			if(menuStart){
+				System.out.println("MENU");
+			}
 		}
 	}
 	
 	public void paint(Graphics g){
-		player.paint(g);
-		
-		for(int i = 0; i < npcs.length; i++){
-			npcs[i].paint(g);
+		if (game) {
+			player.paint(g);
+			for (int i = 0; i < npcs.length; i++) {
+				npcs[i].paint(g);
+			} 
+		}else if(menuStart){
+			g.drawImage(startImage, 0, 0, this);
 		}
 	}
 	
