@@ -6,10 +6,10 @@ import java.awt.Graphics;
 public class NPC {
 	private int status;
 	private int posX, posY, size;
-	private double speedX, speedY;
+	private int speedX, speedY;
 	private Color color;
 	
-	public NPC (int startX, int startY, int size, double initSpeedX, double initSpeedY, Color initColor){
+	public NPC (int startX, int startY, int size, int initSpeedX, int initSpeedY, Color initColor){
 		status = CoronaCurve.HEALTHY;
 		posX = startX;
 		posY = startY;

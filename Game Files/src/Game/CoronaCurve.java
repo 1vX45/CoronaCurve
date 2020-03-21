@@ -91,8 +91,7 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 		for(int i = 0; i < n; i++){
 			x = Math.abs(rand.nextInt() % appletSize_x);
 			y = Math.abs(rand.nextInt() % appletSize_y);
-			d = Math.abs(rand.nextInt() % (2*Math.PI)); //dadurch auch zufällige richtung bei gleicher geschwindigkeit
-			npcs[i] = new NPC(x, y, ENTITY_SIZE, Math.sin(d)*Math.sqrt(2), Math.cos(d)*Math.sqrt(2), CLR_HEALTHY);
+			npcs[i] = new NPC(x, y, ENTITY_SIZE, rand.nextInt() % 2 +1, rand.nextInt() % 2 +1, CLR_HEALTHY);
 		}
 	}
 	
