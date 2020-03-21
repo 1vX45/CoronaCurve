@@ -6,10 +6,10 @@ import java.awt.Graphics;
 public class NPC {
 	private int status;
 	private int posX, posY, size;
-	private int speedX, speedY;
+	private double speedX, speedY;
 	private Color color;
 	
-	public NPC (int startX, int startY, int size, int initSpeedX, int initSpeedY, Color initColor){
+	public NPC (int startX, int startY, int size, double initSpeedX, double initSpeedY, Color initColor){
 		status = CoronaCurve.HEALTHY;
 		posX = startX;
 		posY = startY;
@@ -26,7 +26,7 @@ public class NPC {
 	/*
 	 *  0: no collision
 	 *  1: collision left or right
-	 *  2: collision above or below
+	 *  2: collision up or down
 	 */
 	public int isBorder(int sizeX, int sizeY){
 		if(posX < 0 || posX > sizeX - size)
