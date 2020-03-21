@@ -55,7 +55,7 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	private static final int PLAYER_STARTY = appletSize_y - 50;
 	private static final int ENTITY_SPEED = 1;
 
-	private int propability = 50;
+	private int propability = 5;
 	
 	private NPC[] npcs;
 	private int[] npcActions;
@@ -111,7 +111,6 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 		for(int i = 0; i < n; i++){
 			x = Math.abs(rand.nextInt() % appletSize_x);
 			y = Math.abs(rand.nextInt() % appletSize_y);
-//			npcs[i] = new NPC(x, y, ENTITY_SIZE, rand.nextInt() % 2 +1, rand.nextInt() % 2 +1, CLR_HEALTHY);
 			npcs[i] = new NPC(x, y, ENTITY_SIZE, (double)(rand.nextInt() % 20) / 10, (double)(rand.nextInt() % 20) / 10, CLR_HEALTHY);
 		}
 	}
@@ -128,19 +127,19 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 			j = jr;
 			while(j<npcs.length){
 				if(npcs[i].collidesWith(npcs[j])){		
-					if (Math.abs((int)rand.nextInt()  % 100 + 1) < propability) {
-						System.out.println("INFECT");
-						if(npcs[j].getStatus() == INFECTED) 
-							npcs[i].infect();
-						if(npcs[i].getStatus() == INFECTED)
-							npcs[j].infect();
-					}
+					int r = Math.abs((int)rand.nextInt()  % 100 + 1);
+					if(npcs[j].getStatus() == INFECTED && r<propability) 
+						npcs[i].infect();
+					if(npcs[i].getStatus() == INFECTED && r<propability)
+						npcs[j].infect();
+					
 				}
 				j++;
 			}
 			jr++;
 			
-			if(player.collidesWith(npcs[i])){
+			int r = Math.abs((int)rand.nextInt()  % 100 + 1);
+			if(player.collidesWith(npcs[i]) && r<propability){
 				npcs[i].infect();
 			}
 		}
