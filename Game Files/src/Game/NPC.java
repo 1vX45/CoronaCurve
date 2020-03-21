@@ -2,14 +2,17 @@ package Game;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Random;
+
 
 public class NPC {
 	private int status;
+	private int duration; //wie lange es dauert bis person wieder gesundet
 	private int posX, posY, size;
-	private double speedX, speedY;
+	private int speedX, speedY;
 	private Color color;
 	
-	public NPC (int startX, int startY, int size, double initSpeedX, double initSpeedY, Color initColor){
+	public NPC (int startX, int startY, int size, int initSpeedX, int initSpeedY, Color initColor){
 		status = CoronaCurve.HEALTHY;
 		posX = startX;
 		posY = startY;
@@ -17,16 +20,25 @@ public class NPC {
 		speedX = initSpeedX;
 		speedY = initSpeedY;
 		color = initColor;
+		duration = 0;
 	}
-	
+	Random rand = new Random();
 	public int getStatus(){
 		return status;
+	}
+	
+	public int getX(){
+		return posX;
+	}
+	
+	public int getY(){
+		return posY;
 	}
 	
 	/*
 	 *  0: no collision
 	 *  1: collision left or right
-	 *  2: collision up or down
+	 *  2: collision above or below
 	 */
 	public int isBorder(int sizeX, int sizeY){
 		if(posX < 0 || posX > sizeX - size)
@@ -35,7 +47,6 @@ public class NPC {
 			return 2;
 		else return 0;
 	}
-	
 	
 	public void move(){
 		int x = CoronaCurve.appletSize_x;
@@ -54,9 +65,54 @@ public class NPC {
 		}
 	}
 	
+	public void infect(){
+		status = CoronaCurve.INFECTED;
+		color = CoronaCurve.CLR_INFECTED;
+		setDuration(Math.abs(rand.nextInt() % 300 + 100); //zufällig?
+	}
+	
+	public int isHealed(){
+		if(getDuration() == 0) {	//gesund, krankheitszustand bleibt wie bisher
+			return 0;
+		}
+		if(getDuration() == 1) {	//wird jetzt geheilt
+			return 1;
+		}
+		else if (getDuration() < 0) {	//Fehler, aber wird trotzdem geheilt
+			System.out.println("ERROR: HEALING DOESN'T WORK AS EXPECTED");
+			System.out.println(getDuration());
+			return 1;
+		}
+		else {	//krank, bleibt aber krank
+			setDuration(getDuration()-1);
+			return 0;
+		}
+	}
+	
+	public void heal(){
+		status = CoronaCurve.IMMUNE;
+		color = CoronaCurve.CLR_IMMUNE;
+	}
+	
+	public boolean collidesWith(NPC other){
+		int diff_x = Math.abs(posX - other.getX());
+		int diff_y = Math.abs(posY - other.getY());
+		double dist = Math.sqrt(diff_x*diff_x + diff_y*diff_y);
+		if(dist < size) 
+			return true;
+		else return false;
+	}
+	
 	public void paint(Graphics g){
 		g.setColor(color);
 		g.fillOval(posX, posY, size, size);
 	}
-}
 
+	public int getDuration() {
+		return duration;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
+	}
+}
