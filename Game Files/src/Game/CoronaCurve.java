@@ -9,13 +9,17 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Random;
 
 import javax.swing.JFrame;
 
 public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyListener {
 		
-	private static int appletSize_x = 600;							//Breite des Applet-Fensters
-	private static int appletSize_y = 600;							//Höhe des Applet-Fensters
+	private static final long serialVersionUID = 1L;
+	
+	
+	public static int appletSize_x = 600;							//Breite des Applet-Fensters
+	public static int appletSize_y = 600;							//Höhe des Applet-Fensters
 	
 	private Color mainColor = Color.yellow;							//Schriftfarbe
 	private Color backgroundColor = Color.black;					//Hintergrundfarbe
@@ -29,11 +33,28 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	
 	Thread th;
 	
+	Random rand = new Random();
+	
 	public static final int HEALTHY = 0;
 	public static final int INFECTED = 1;
 	public static final int IMMUNE = 2;
 	
+	private static final Color CLR_HEALTHY = Color.GREEN;
+	private static final Color CLR_INFECTED = Color.ORANGE;
+	private static final Color CLR_IMMUNE = new Color(186, 85, 211);
+	
+	private static final int ENTITY_SIZE = 15;
+	private static final int PLAYER_STARTX = appletSize_x / 2;
+	private static final int PLAYER_STARTY = appletSize_y - 50;
+	private static final int ENTITY_SPEED = 1;
+
+	
 	private NPC[] npcs;
+	private Player player;
+	
+	private boolean leftPressed, rightPressed, upPressed, downPressed;
+	
+	
 	
 	public static void main(String[] args){
 		CoronaCurve cc = new CoronaCurve();
@@ -57,9 +78,21 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 		addKeyListener(this);
 		addMouseListener(this);
 		
-		npcs = new NPC[100];
+		npcs = new NPC[20];
+		createNPCs(npcs, 20);
 		
-		npcs[0] = new NPC(250, 250, 2);
+	
+		player = new Player(PLAYER_STARTX, PLAYER_STARTY, ENTITY_SIZE, ENTITY_SPEED, CLR_INFECTED);
+	}
+	
+	private void createNPCs(NPC[] npcs, int n){
+		int x, y;
+		
+		for(int i = 0; i < n; i++){
+			x = Math.abs(rand.nextInt() % appletSize_x);
+			y = Math.abs(rand.nextInt() % appletSize_y);
+			npcs[i] = new NPC(x, y, ENTITY_SIZE, ENTITY_SPEED, ENTITY_SPEED, CLR_HEALTHY);
+		}
 	}
 	
 	public void start(){
@@ -104,8 +137,18 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	@Override
 	public void run() {
 		while (true) {
-			npcs[0].move();
+			
 			repaint();
+			
+			if(leftPressed) player.moveLeft();
+			if(rightPressed) player.moveRight();
+			if(upPressed) player.moveUp();
+			if(downPressed) player.moveDown();
+			
+			for(int i = 0; i < npcs.length; i++){
+				npcs[i].move();
+			}
+			
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
@@ -115,20 +158,29 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	}
 	
 	public void paint(Graphics g){
-		npcs[0].paintNPC(g);
+		player.paint(g);
+		
+		for(int i = 0; i < npcs.length; i++){
+			npcs[i].paint(g);
+		}
 	}
 	
 
 	@Override
-	public void keyPressed(KeyEvent arg0) {
-		// TODO Auto-generated method stub
+	public void keyPressed(KeyEvent e) {
+		if(e.getKeyCode() == KeyEvent.VK_LEFT) leftPressed = true;
+		if(e.getKeyCode() == KeyEvent.VK_RIGHT) rightPressed = true;
+		if(e.getKeyCode() == KeyEvent.VK_UP) upPressed = true;
+		if(e.getKeyCode() == KeyEvent.VK_DOWN) downPressed = true;
 		
 	}
 
 	@Override
-	public void keyReleased(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void keyReleased(KeyEvent e) {
+		if(e.getKeyCode() == KeyEvent.VK_LEFT) leftPressed = false;
+		if(e.getKeyCode() == KeyEvent.VK_RIGHT) rightPressed = false;
+		if(e.getKeyCode() == KeyEvent.VK_UP) upPressed = false;
+		if(e.getKeyCode() == KeyEvent.VK_DOWN) downPressed = false;
 	}
 
 	@Override
