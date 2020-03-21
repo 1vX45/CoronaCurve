@@ -22,7 +22,7 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	public static int appletSize_y = 600;							//Höhe des Applet-Fensters
 	
 	private Color mainColor = Color.yellow;							//Schriftfarbe
-	private Color backgroundColor = Color.black;					//Hintergrundfarbe
+	private Color backgroundColor = Color.white;					//Hintergrundfarbe
 	
 	private Font mainFont = new Font("Impact", Font.PLAIN, 20);		//Schriftart	
 	private Font titleFont = new Font("Impact", Font.PLAIN, 50);	//Schriftart für Titel
@@ -39,9 +39,9 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	public static final int INFECTED = 1;
 	public static final int IMMUNE = 2;
 	
-	private static final Color CLR_HEALTHY = Color.GREEN;
-	private static final Color CLR_INFECTED = Color.ORANGE;
-	private static final Color CLR_IMMUNE = new Color(186, 85, 211);
+	public static final Color CLR_HEALTHY = new Color(82, 189, 81);
+	public static final Color CLR_INFECTED = new Color(189, 55, 55);
+	public static final Color CLR_IMMUNE = new Color(166, 166, 166);
 	
 	private static final int ENTITY_SIZE = 15;
 	private static final int PLAYER_STARTX = appletSize_x / 2;
@@ -54,7 +54,7 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 	
 	private boolean leftPressed, rightPressed, upPressed, downPressed;
 	
-	
+	public int game_status = 0; //0: startbildschirm, 1: spiel, ...
 	
 	public static void main(String[] args){
 		CoronaCurve cc = new CoronaCurve();
@@ -91,11 +91,28 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 		for(int i = 0; i < n; i++){
 			x = Math.abs(rand.nextInt() % appletSize_x);
 			y = Math.abs(rand.nextInt() % appletSize_y);
-			d = Math.abs(rand.nextInt() % (2*Math.PI)); //dadurch auch zufällige richtung bei gleicher geschwindigkeit
-			npcs[i] = new NPC(x, y, ENTITY_SIZE, Math.sin(d)*Math.sqrt(2), Math.cos(d)*Math.sqrt(2), CLR_HEALTHY);
+			npcs[i] = new NPC(x, y, ENTITY_SIZE, rand.nextInt() % 2 +1, rand.nextInt() % 2 +1, CLR_HEALTHY);
 		}
 	}
 	
+	private void checkCollisions(){
+		int j = 1, jr = 1;
+		for(int i = 0; i < npcs.length; i++){
+			j = jr;
+			while(j<npcs.length){
+				if(npcs[i].collidesWith(npcs[j]) && (npcs[i].getStatus() == INFECTED || npcs[j].getStatus() == INFECTED)){
+					if (npcs[i].getStatus() == HEALTHY){
+						npcs[i].infect();
+					}
+					if (npcs[j].getStatus() == HEALTHY){
+						npcs[j].infect();
+					}
+				}
+				j++;
+			}
+			jr++;
+		}
+	}
 	
 	public void start(){
 		th = new Thread(this);
@@ -108,7 +125,7 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -149,7 +166,12 @@ public class CoronaCurve extends Applet implements Runnable, MouseListener, KeyL
 			
 			for(int i = 0; i < npcs.length; i++){
 				npcs[i].move();
+				if (npcs[i].isHealed() == 1) {
+					npcs[i].heal();
+				}
 			}
+			
+			checkCollisions();
 			
 			try {
 				Thread.sleep(10);
